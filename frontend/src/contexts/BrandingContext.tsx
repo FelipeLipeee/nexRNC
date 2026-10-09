@@ -90,20 +90,23 @@ export const BrandingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   }, [branding.primary_color, branding.accent_color]);
 
-  // Apply dynamic favicon
+  // Apply dynamic favicon to all icon link tags in document
   useEffect(() => {
-    let favicon = document.querySelector<HTMLLinkElement>("link[rel~='icon']");
-    if (!favicon) {
-      favicon = document.createElement('link');
-      favicon.rel = 'icon';
-      document.head.appendChild(favicon);
-    }
-    if (branding.logo_url) {
-      favicon.href = branding.logo_url;
-      favicon.type = 'image/png';
+    const iconLinks = document.querySelectorAll<HTMLLinkElement>("link[rel*='icon']");
+    const href = branding.logo_url || '/favicon.png?v=nex';
+    const type = 'image/png';
+
+    if (iconLinks.length > 0) {
+      iconLinks.forEach((link) => {
+        link.href = href;
+        link.type = type;
+      });
     } else {
-      favicon.href = '/favicon.svg';
-      favicon.type = 'image/svg+xml';
+      const link = document.createElement('link');
+      link.rel = 'icon';
+      link.type = type;
+      link.href = href;
+      document.head.appendChild(link);
     }
   }, [branding.logo_url]);
 

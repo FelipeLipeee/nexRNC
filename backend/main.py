@@ -27,6 +27,13 @@ app.add_middleware(
 
 import urllib.parse
 
+@app.get("/favicon.ico", include_in_schema=False)
+async def serve_favicon_ico():
+    ico = Path(__file__).resolve().parent / "static" / "favicon.png"
+    if ico.is_file():
+        return FileResponse(str(ico))
+    raise HTTPException(status_code=404)
+
 @app.get("/uploads/{filename:path}")
 async def serve_upload(filename: str):
     """
