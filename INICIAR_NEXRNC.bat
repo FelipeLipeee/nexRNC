@@ -10,6 +10,26 @@ echo.
 
 cd /d "%~dp0"
 
+REM 0. Verifica se os arquivos do sistema estao descompactados
+if not exist "%~dp0backend\main.py" (
+    echo ======================================================================
+    echo  [ERRO CRITICO] ARQUIVOS DO SISTEMA NAO ENCONTRADOS!
+    echo ======================================================================
+    echo.
+    echo  Voce precisa EXTRAIR o arquivo ZIP antes de executar o sistema.
+    echo  Nao execute diretamente de dentro do arquivo compactado .zip.
+    echo.
+    echo  COMO RESOLVER:
+    echo  1. Feche esta janela.
+    echo  2. Clique com o botao direito no arquivo ZIP baixado.
+    echo  3. Escolha "Extrair Tudo..." e confirme a extracao.
+    echo  4. Abra a pasta resultante e execute o INICIAR_NEXRNC.bat por la.
+    echo ======================================================================
+    echo.
+    pause
+    exit /b 1
+)
+
 REM 1. Procura o executavel do Python (embutido, no PATH, py launcher ou pastas padrao)
 set "PY_CMD="
 
@@ -30,10 +50,19 @@ if !errorlevel! equ 0 (
     goto :PYTHON_FOUND
 )
 
+if exist "%LOCALAPPDATA%\Python\bin\python.exe" (
+    set "PY_CMD=%LOCALAPPDATA%\Python\bin\python.exe"
+    goto :PYTHON_FOUND
+)
+
 REM Procura em diretorios comuns de instalacao do Windows
-for %%V in (Python313 Python312 Python311 Python310 Python39) do (
+for %%V in (Python314 Python313 Python312 Python311 Python310 Python39) do (
     if exist "%LOCALAPPDATA%\Programs\Python\%%V\python.exe" (
         set "PY_CMD=%LOCALAPPDATA%\Programs\Python\%%V\python.exe"
+        goto :PYTHON_FOUND
+    )
+    if exist "%LOCALAPPDATA%\Python\pythoncore-%%V-64\python.exe" (
+        set "PY_CMD=%LOCALAPPDATA%\Python\pythoncore-%%V-64\python.exe"
         goto :PYTHON_FOUND
     )
     if exist "C:\%%V\python.exe" (
@@ -55,11 +84,11 @@ echo  Para rodar o nexRNC, voce precisa ter o Python instalado.
 echo.
 echo  COMO RESOLVER EM 1 MINUTO:
 echo  1. Acesse o site oficial: https://www.python.org/downloads/
-echo  2. Baixe o instalador do Python (versao 3.11 ou 3.12 recomendada).
+echo  2. Baixe o instalador do Python.
 echo  3. IMPORTANTE: Na PRIMEIRA tela do instalador, marque a caixinha:
 echo     [X] "Add python.exe to PATH"
 echo  4. Clique em "Install Now".
-echo  5. Apos instalar, execute este arquivo (INICIAR_NEXRNC.bat) novamente!
+echo  5. Apos instalar, execute este arquivo novamente.
 echo.
 echo ======================================================================
 pause
@@ -72,26 +101,25 @@ echo.
 REM 2. Verifica se as bibliotecas estao instaladas; senao instala automaticamente
 echo Verificando dependencias necessarias...
 "!PY_CMD!" -c "import fastapi, uvicorn" >nul 2>&1
-if !errorlevel! neq 0 (
-    echo.
-    echo ======================================================================
-    echo  [PRIMEIRA EXECUCAO DETECTADA]
-    echo  Instalando dependencias (FastAPI, Uvicorn, etc)... Aguarde um instante.
-    echo ======================================================================
-    echo.
-    "!PY_CMD!" -m pip install -r "%~dp0requirements.txt"
-    if !errorlevel! neq 0 (
-        echo.
-        echo [ALERTA] Tentando instalacao essencial de contingencia...
-        "!PY_CMD!" -m pip install fastapi "uvicorn[standard]" pydantic python-multipart
-    )
-    echo.
-    echo [OK] Dependencias instaladas com sucesso!
-    echo.
-) else (
-    echo [OK] Dependencias FastAPI e Uvicorn prontas.
-    echo.
-)
+if !errorlevel! equ 0 goto :DEPS_OK
+
+echo.
+echo ======================================================================
+echo  [PRIMEIRA EXECUCAO DETECTADA]
+echo  Instalando dependencias basicas: FastAPI, Uvicorn, Pydantic...
+echo ======================================================================
+echo.
+
+"!PY_CMD!" -m pip install fastapi "uvicorn[standard]" pydantic python-multipart
+if errorlevel 1 "!PY_CMD!" -m pip install -r "%~dp0requirements.txt"
+
+echo.
+echo [OK] Dependencias instaladas com sucesso.
+echo.
+
+:DEPS_OK
+echo [OK] Dependencias FastAPI e Uvicorn prontas.
+echo.
 
 REM 3. Diretorio de anexos
 if not exist "%~dp0data\uploads" (

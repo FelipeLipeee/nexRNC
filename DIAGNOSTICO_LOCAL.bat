@@ -10,6 +10,13 @@ echo.
 
 cd /d "%~dp0"
 
+if not exist "%~dp0backend\main.py" (
+    echo [FALHA CRITICA] Arquivos do sistema nao encontrados!
+    echo Voce precisa EXTRAIR o arquivo ZIP antes de executar.
+    echo.
+    goto :END_DIAG
+)
+
 echo [1] Verificando instalacao do Python:
 set "PY_CMD="
 
@@ -34,9 +41,30 @@ if !errorlevel! equ 0 (
     goto :PY_CHECK_DONE
 )
 
-for %%V in (Python313 Python312 Python311 Python310 Python39) do (
+if exist "%LOCALAPPDATA%\Python\bin\python.exe" (
+    set "PY_CMD=%LOCALAPPDATA%\Python\bin\python.exe"
+    echo     - Encontrado em: !PY_CMD!
+    goto :PY_CHECK_DONE
+)
+
+for %%V in (Python314 Python313 Python312 Python311 Python310 Python39) do (
     if exist "%LOCALAPPDATA%\Programs\Python\%%V\python.exe" (
         set "PY_CMD=%LOCALAPPDATA%\Programs\Python\%%V\python.exe"
+        echo     - Encontrado em: !PY_CMD!
+        goto :PY_CHECK_DONE
+    )
+    if exist "%LOCALAPPDATA%\Python\pythoncore-%%V-64\python.exe" (
+        set "PY_CMD=%LOCALAPPDATA%\Python\pythoncore-%%V-64\python.exe"
+        echo     - Encontrado em: !PY_CMD!
+        goto :PY_CHECK_DONE
+    )
+    if exist "C:\%%V\python.exe" (
+        set "PY_CMD=C:\%%V\python.exe"
+        echo     - Encontrado em: !PY_CMD!
+        goto :PY_CHECK_DONE
+    )
+    if exist "C:\Program Files\Python\%%V\python.exe" (
+        set "PY_CMD=C:\Program Files\Python\%%V\python.exe"
         echo     - Encontrado em: !PY_CMD!
         goto :PY_CHECK_DONE
     )
