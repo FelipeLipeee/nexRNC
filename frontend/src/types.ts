@@ -353,3 +353,16 @@ export function canCreateRnc(user: UserProfile | null): boolean {
   );
 }
 
+export interface BrandingSettings {
+  id: number;
+  company_name: string;
+  system_title: string;
+  logo_url?: string | null;
+  logo_dark_url?: string | null;
+  primary_color: string;
+  accent_color: string;
+  custom_footer?: string | null;
+  updated_at?: string | null;
+}
+
+

@@ -1,7 +1,9 @@
-import React from 'react';
-import { Plus, User, LayoutGrid, ListFilter, LogOut, BarChart3 } from 'lucide-react';
+import React, { useState } from 'react';
+import { Plus, User, LayoutGrid, ListFilter, LogOut, BarChart3, Palette } from 'lucide-react';
 import type { UserProfile, SectorType } from '../types';
 import { isExecutiveUser, canCreateRnc } from '../types';
+import { useBranding } from '../contexts/BrandingContext';
+import { BrandingModal } from './BrandingModal';
 
 interface HeaderProps {
   currentUser: UserProfile;
@@ -18,6 +20,9 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleView,
   onOpenNewRnc,
 }) => {
+  const { branding } = useBranding();
+  const [showBrandingModal, setShowBrandingModal] = useState(false);
+
   const getSectorBadge = (sector: SectorType) => {
     switch (sector) {
       case 'comercial': return 'bg-blue-500/20 text-blue-300 border-blue-400/40';
@@ -38,23 +43,30 @@ export const Header: React.FC<HeaderProps> = ({
     <header className="bg-tec-navy text-white border-b border-tec-navy-light sticky top-0 z-50 shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row items-center justify-between gap-4">
         
-        {/* Brand and Title identical to TecDesk */}
-        <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-lg bg-tec-orange flex items-center justify-center shadow-md p-1.5">
-            <img src="/tec-simbolo-branco.png" alt="Grupo Tec" className="w-full h-full object-contain" />
+        {/* Dynamic Brand and Title (White-Label Ready) */}
+        <div className="flex items-center gap-3.5">
+          <div className="w-10 h-10 rounded-xl bg-tec-navy-dark flex items-center justify-center shadow-md p-1 border border-slate-700/50 overflow-hidden shrink-0">
+            {branding.logo_url ? (
+              <img src={branding.logo_url} alt={branding.company_name} className="w-full h-full object-contain" />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-orange-500 to-amber-600 rounded-lg flex items-center justify-center font-black text-white text-xs tracking-tighter">
+                RNC
+              </div>
+            )}
           </div>
 
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs uppercase tracking-widest text-tec-orange font-bold">
-                GRUPO TEC
+              <span className="text-[10px] uppercase tracking-widest text-orange-400 font-extrabold truncate max-w-[240px]">
+                {branding.company_name}
               </span>
             </div>
-            <h1 className="text-lg md:text-xl font-bold tracking-tight text-white flex items-center gap-2">
-              nexRNC Workflow Hub
+            <h1 className="text-base md:text-lg font-bold tracking-tight text-white flex items-center gap-2">
+              {branding.system_title}
             </h1>
           </div>
         </div>
+
 
         {/* User Info & Actions */}
         <div className="flex flex-wrap items-center gap-3">
@@ -124,6 +136,17 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
           )}
 
+          {/* White-Label Branding Button (Apenas Executivos / TI / Gestao) */}
+          {isExecutiveUser(currentUser) && (
+            <button
+              onClick={() => setShowBrandingModal(true)}
+              title="Personalizar Marca e White-Label"
+              className="p-2 rounded-lg bg-tec-navy-dark hover:bg-orange-500/20 text-slate-300 hover:text-orange-400 border border-gray-700/60 transition-colors cursor-pointer"
+            >
+              <Palette className="w-4 h-4" />
+            </button>
+          )}
+
           {/* Logout Button */}
           <button
             onClick={onLogout}
@@ -136,6 +159,10 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
       </div>
+
+      {/* White-Label Settings Modal */}
+      <BrandingModal isOpen={showBrandingModal} onClose={() => setShowBrandingModal(false)} />
     </header>
   );
 };
+

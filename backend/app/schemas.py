@@ -163,3 +163,24 @@ class RncDetailResponse(BaseModel):
 class ReturnStepRequest(BaseModel):
     motivo: str = Field(..., min_length=5, description="Justificativa obrigatória do retorno da etapa")
     user_name: str = Field("Operador", description="Nome do operador que solicitou o retorno")
+
+class BrandingSettings(BaseModel):
+    id: int = 1
+    company_name: str = "nexRNC Enterprise"
+    system_title: str = "Sistema de Gestão de Não Conformidades"
+    logo_url: Optional[str] = None
+    logo_dark_url: Optional[str] = None
+    primary_color: str = "#13273e"
+    accent_color: str = "#e35210"
+    custom_footer: Optional[str] = "Esteira Digital de Gestão e Tratativa de Relatórios de Não Conformidade"
+    updated_at: Optional[str] = None
+
+class BrandingSettingsUpdate(BaseModel):
+    company_name: Optional[str] = None
+    system_title: Optional[str] = None
+    logo_url: Optional[str] = None
+    logo_dark_url: Optional[str] = None
+    primary_color: Optional[str] = None
+    accent_color: Optional[str] = None
+    custom_footer: Optional[str] = None
+

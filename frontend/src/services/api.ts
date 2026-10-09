@@ -1,4 +1,4 @@
-import type { RncItem, RncDetail, UserProfile, KpiSummary, BiMetricsResponse, BiFilterParams } from '../types';
+import type { RncItem, RncDetail, UserProfile, KpiSummary, BiMetricsResponse, BiFilterParams, BrandingSettings } from '../types';
 
 const getBaseUrl = (): string => {
   if (typeof window !== 'undefined') {
@@ -162,4 +162,39 @@ export async function fetchBiMetrics(filters: BiFilterParams = {}): Promise<BiMe
   if (!res.ok) throw new Error('Erro ao carregar métricas de BI');
   return res.json();
 }
+
+export async function fetchBranding(): Promise<BrandingSettings> {
+  const res = await fetch(`${getBaseUrl()}/settings/branding`);
+  if (!res.ok) throw new Error('Erro ao obter dados de identidade visual');
+  return res.json();
+}
+
+export async function updateBrandingSettings(payload: Partial<BrandingSettings>): Promise<BrandingSettings> {
+  const res = await fetch(`${getBaseUrl()}/settings/branding`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: 'Erro ao atualizar branding' }));
+    throw new Error(err.detail || 'Erro ao atualizar branding');
+  }
+  return res.json();
+}
+
+export async function uploadBrandingLogo(file: File): Promise<BrandingSettings> {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const res = await fetch(`${getBaseUrl()}/settings/branding/logo`, {
+    method: 'POST',
+    body: formData,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: 'Erro ao enviar logotipo' }));
+    throw new Error(err.detail || 'Erro ao enviar logotipo');
+  }
+  return res.json();
+}
+
 

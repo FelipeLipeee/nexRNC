@@ -2,13 +2,16 @@ import React, { useState } from 'react';
 import { Lock, User, AlertCircle, ArrowRight, ShieldCheck, Eye, EyeOff, UserPlus } from 'lucide-react';
 import { loginUser } from '../services/api';
 import { RegisterForm } from './RegisterForm';
+import { useBranding } from '../contexts/BrandingContext';
 import type { UserProfile } from '../types';
+
 
 interface LoginScreenProps {
   onLoginSuccess: (user: UserProfile, token: string) => void;
 }
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
+  const { branding } = useBranding();
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -42,20 +45,27 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
       {/* Brand Header */}
       <div className="text-center mb-8">
         <div className="inline-flex items-center justify-center gap-3 mb-3">
-          <img src="/tec-simbolo-cor.png" alt="Grupo Tec" className="w-12 h-12 object-contain" />
+          {branding.logo_url ? (
+            <img src={branding.logo_url} alt={branding.company_name} className="w-12 h-12 object-contain rounded-xl p-1 bg-white shadow-sm border border-slate-200" />
+          ) : (
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center font-black text-white text-base shadow-md">
+              RNC
+            </div>
+          )}
           <div className="text-left">
             <h1 className="text-2xl font-black text-tec-navy tracking-tight">
               nex<span className="text-tec-orange">RNC</span>
             </h1>
-            <span className="text-[10px] uppercase font-bold tracking-widest text-slate-500 block">
-              Grupo Tec
+            <span className="text-[10px] uppercase font-bold tracking-widest text-slate-500 block truncate max-w-[220px]">
+              {branding.company_name}
             </span>
           </div>
         </div>
         <p className="text-xs text-slate-600 max-w-sm">
-          Esteira Digital de Gestão e Tratativa de Relatórios de Não Conformidade
+          {branding.custom_footer || 'Esteira Digital de Gestão e Tratativa de Relatórios de Não Conformidade'}
         </p>
       </div>
+
 
       {/* Login Card */}
       <div className="w-full max-w-md bg-white border border-slate-200/90 rounded-2xl shadow-xl p-8 mb-6">

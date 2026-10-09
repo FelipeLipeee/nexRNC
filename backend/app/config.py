@@ -48,5 +48,6 @@ DB_USER = os.getenv("DB_USER", "sa")
 DB_PASSWORD = os.getenv("DB_PASSWORD", "")
 DB_PORT = os.getenv("DB_PORT", "1433")
 DB_DRIVER = os.getenv("DB_DRIVER", "ODBC Driver 17 for SQL Server")
-USE_SQL_SERVER = os.getenv("USE_SQL_SERVER", "true").lower() in ("true", "1", "yes")
-ALLOW_SQLITE_FALLBACK = os.getenv("ALLOW_SQLITE_FALLBACK", "false").lower() in ("true", "1", "yes")
+USE_SQL_SERVER = os.getenv("USE_SQL_SERVER", "false").lower() in ("true", "1", "yes")
+ALLOW_SQLITE_FALLBACK = os.getenv("ALLOW_SQLITE_FALLBACK", "true").lower() in ("true", "1", "yes")
+

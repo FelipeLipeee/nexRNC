@@ -8,11 +8,12 @@ from app.database import init_db
 from app.seed import seed_database
 from app.routers.rnc_router import router as rnc_router
 from app.routers.bi_router import router as bi_router
+from app.routers.branding_router import router as branding_router
 
 app = FastAPI(
-    title="nexrnc - Gestão e Esteira de RNCs Tecvidro",
-    description="Motor de workflow setorial com rastreabilidade ponta a ponta e controle de SLA",
-    version="1.4.0"
+    title="nexRNC — Enterprise Quality Workflow Platform",
+    description="Motor industrial de workflow de não conformidades, controle de SLA e rastreabilidade",
+    version="1.5.0"
 )
 
 app.add_middleware(
@@ -68,6 +69,8 @@ async def serve_upload(filename: str):
 
 app.include_router(rnc_router)
 app.include_router(bi_router)
+app.include_router(branding_router)
+
 
 @app.on_event("startup")
 def on_startup():
