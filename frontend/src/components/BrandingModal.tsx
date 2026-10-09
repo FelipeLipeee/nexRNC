@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { X, Upload, Check, Palette, Building2, Image as ImageIcon, Sparkles, RefreshCw } from 'lucide-react';
+import { X, Upload, Check, Palette, Building2, Image as ImageIcon, Sparkles, RefreshCw, Pipette } from 'lucide-react';
 import { useBranding } from '../contexts/BrandingContext';
 
 interface BrandingModalProps {
@@ -8,11 +8,34 @@ interface BrandingModalProps {
 }
 
 const PRESET_THEMES = [
-  { name: 'Tec Navy & Orange (Padrão)', primary: '#13273e', accent: '#e35210' },
+  { name: 'Tec Navy & Orange', primary: '#13273e', accent: '#e35210' },
   { name: 'Industrial Slate & Cyan', primary: '#0f172a', accent: '#06b6d4' },
   { name: 'Enterprise Blue & Gold', primary: '#1e3a8a', accent: '#f59e0b' },
   { name: 'Forest Quality & Emerald', primary: '#064e3b', accent: '#10b981' },
 ];
+
+function hexToRgb(hex: string): string {
+  const clean = hex.replace('#', '').trim();
+  if (clean.length === 3) {
+    const r = parseInt(clean[0] + clean[0], 16);
+    const g = parseInt(clean[1] + clean[1], 16);
+    const b = parseInt(clean[2] + clean[2], 16);
+    return isNaN(r) ? 'RGB(0, 0, 0)' : `RGB(${r}, ${g}, ${b})`;
+  }
+  if (clean.length === 6) {
+    const r = parseInt(clean.substring(0, 2), 16);
+    const g = parseInt(clean.substring(2, 4), 16);
+    const b = parseInt(clean.substring(4, 6), 16);
+    return isNaN(r) ? 'RGB(0, 0, 0)' : `RGB(${r}, ${g}, ${b})`;
+  }
+  return 'RGB(0, 0, 0)';
+}
+
+function normalizeHex(val: string): string {
+  let clean = val.trim();
+  if (!clean.startsWith('#')) clean = `#${clean}`;
+  return clean;
+}
 
 export const BrandingModal: React.FC<BrandingModalProps> = ({ isOpen, onClose }) => {
   const { branding, updateSettings, uploadLogo } = useBranding();
@@ -89,7 +112,7 @@ export const BrandingModal: React.FC<BrandingModalProps> = ({ isOpen, onClose })
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSave} className="p-6 space-y-5 text-slate-700 max-h-[80vh] overflow-y-auto">
+        <form onSubmit={handleSave} className="p-6 space-y-4 text-slate-700 max-h-[82vh] overflow-y-auto">
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 text-xs p-3 rounded-lg flex items-center gap-2">
               <span>{error}</span>
@@ -97,19 +120,19 @@ export const BrandingModal: React.FC<BrandingModalProps> = ({ isOpen, onClose })
           )}
 
           {/* Company Name & System Title */}
-          <div className="space-y-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
-                Nome da Empresa (White-Label)
+                Nome da Empresa
               </label>
               <div className="relative">
-                <Building2 className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+                <Building2 className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
                 <input
                   type="text"
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
                   placeholder="Ex: Minha Indústria S/A"
-                  className="w-full pl-9 pr-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  className="w-full pl-9 pr-3 py-1.5 text-xs sm:text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                   required
                 />
               </div>
@@ -117,14 +140,14 @@ export const BrandingModal: React.FC<BrandingModalProps> = ({ isOpen, onClose })
 
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
-                Título do Sistema / Esteira
+                Título da Esteira
               </label>
               <input
                 type="text"
                 value={systemTitle}
                 onChange={(e) => setSystemTitle(e.target.value)}
-                placeholder="Ex: Gestão de Não Conformidades (RNC)"
-                className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                placeholder="Ex: Gestão de Não Conformidades"
+                className="w-full px-3 py-1.5 text-xs sm:text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
               />
             </div>
           </div>
@@ -135,7 +158,7 @@ export const BrandingModal: React.FC<BrandingModalProps> = ({ isOpen, onClose })
               Logomarca Institucional
             </label>
             <div className="flex items-center gap-4 p-3 bg-slate-50 border border-slate-200 rounded-xl">
-              <div className="w-16 h-16 rounded-lg bg-white border border-slate-200 flex items-center justify-center overflow-hidden p-1 shadow-sm">
+              <div className="w-14 h-14 rounded-lg bg-white border border-slate-200 flex items-center justify-center overflow-hidden p-1 shadow-sm shrink-0">
                 {previewUrl ? (
                   <img src={previewUrl} alt="Logo Preview" className="w-full h-full object-contain" />
                 ) : (
@@ -153,7 +176,7 @@ export const BrandingModal: React.FC<BrandingModalProps> = ({ isOpen, onClose })
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-white border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 shadow-sm transition-all cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-white border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 shadow-xs transition-all cursor-pointer"
                 >
                   <Upload className="w-3.5 h-3.5 text-slate-500" />
                   <span>Escolher Imagem (PNG, JPG, SVG)</span>
@@ -163,10 +186,10 @@ export const BrandingModal: React.FC<BrandingModalProps> = ({ isOpen, onClose })
             </div>
           </div>
 
-          {/* Color Palettes */}
+          {/* Color Palettes Presets */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
-              Paletas de Cores Prontas
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+              Paletas Rápidas Pré-Definidas
             </label>
             <div className="grid grid-cols-2 gap-2">
               {PRESET_THEMES.map((theme) => (
@@ -180,7 +203,7 @@ export const BrandingModal: React.FC<BrandingModalProps> = ({ isOpen, onClose })
                   className={`flex items-center gap-2 p-2 border rounded-lg text-left text-xs transition-all cursor-pointer ${
                     primaryColor === theme.primary && accentColor === theme.accent
                       ? 'border-orange-500 bg-orange-50/50 font-bold'
-                      : 'border-slate-200 hover:border-slate-300'
+                      : 'border-slate-200 hover:border-slate-300 bg-white'
                   }`}
                 >
                   <div className="flex gap-1 shrink-0">
@@ -190,6 +213,100 @@ export const BrandingModal: React.FC<BrandingModalProps> = ({ isOpen, onClose })
                   <span className="truncate text-slate-700">{theme.name}</span>
                 </button>
               ))}
+            </div>
+          </div>
+
+          {/* Custom Color Pickers with RGB & Swatch */}
+          <div className="space-y-3 p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                <Pipette className="w-3.5 h-3.5 text-orange-500" />
+                <span>Seletor de Cores Livre (RGB & HEX)</span>
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Cor Primária */}
+              <div className="bg-white p-3 rounded-lg border border-slate-200 shadow-xs space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-slate-700">Cor Primária (Topo)</label>
+                  <span className="text-[10px] font-mono text-slate-500 font-semibold">{hexToRgb(primaryColor)}</span>
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <div className="relative w-10 h-10 rounded-lg overflow-hidden border border-slate-300 shadow-inner shrink-0 cursor-pointer">
+                    <input
+                      type="color"
+                      value={primaryColor.length === 7 ? primaryColor : '#13273e'}
+                      onChange={(e) => setPrimaryColor(e.target.value)}
+                      className="absolute -top-3 -left-3 w-16 h-16 cursor-pointer border-0 p-0"
+                      title="Clique para escolher a cor no espectro"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <input
+                      type="text"
+                      value={primaryColor}
+                      onChange={(e) => setPrimaryColor(normalizeHex(e.target.value))}
+                      maxLength={7}
+                      placeholder="#13273e"
+                      className="w-full px-2.5 py-1.5 text-xs font-mono font-bold uppercase border border-slate-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Cor de Destaque / Acento */}
+              <div className="bg-white p-3 rounded-lg border border-slate-200 shadow-xs space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-slate-700">Cor de Destaque (Botões)</label>
+                  <span className="text-[10px] font-mono text-slate-500 font-semibold">{hexToRgb(accentColor)}</span>
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <div className="relative w-10 h-10 rounded-lg overflow-hidden border border-slate-300 shadow-inner shrink-0 cursor-pointer">
+                    <input
+                      type="color"
+                      value={accentColor.length === 7 ? accentColor : '#e35210'}
+                      onChange={(e) => setAccentColor(e.target.value)}
+                      className="absolute -top-3 -left-3 w-16 h-16 cursor-pointer border-0 p-0"
+                      title="Clique para escolher a cor no espectro"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <input
+                      type="text"
+                      value={accentColor}
+                      onChange={(e) => setAccentColor(normalizeHex(e.target.value))}
+                      maxLength={7}
+                      placeholder="#e35210"
+                      className="w-full px-2.5 py-1.5 text-xs font-mono font-bold uppercase border border-slate-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Live Swatch Preview */}
+            <div className="mt-2 pt-2 border-t border-slate-200/80">
+              <div className="text-[11px] font-semibold text-slate-500 mb-1.5">Pré-visualização em tempo real:</div>
+              <div
+                className="p-2.5 rounded-lg flex items-center justify-between shadow-xs transition-colors"
+                style={{ backgroundColor: primaryColor }}
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 rounded bg-white/20 flex items-center justify-center text-[10px] font-black text-white">
+                    RNC
+                  </div>
+                  <span className="text-xs font-bold text-white truncate max-w-[200px]">
+                    {companyName || 'Sua Empresa'}
+                  </span>
+                </div>
+                <div
+                  className="px-2.5 py-1 rounded text-[11px] font-bold text-white shadow-xs cursor-default"
+                  style={{ backgroundColor: accentColor }}
+                >
+                  + Nova RNC
+                </div>
+              </div>
             </div>
           </div>
 
@@ -203,7 +320,7 @@ export const BrandingModal: React.FC<BrandingModalProps> = ({ isOpen, onClose })
               value={customFooter}
               onChange={(e) => setCustomFooter(e.target.value)}
               placeholder="Ex: Esteira Digital de Qualidade e Rastreabilidade"
-              className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+              className="w-full px-3 py-1.5 text-xs sm:text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
             />
           </div>
 
