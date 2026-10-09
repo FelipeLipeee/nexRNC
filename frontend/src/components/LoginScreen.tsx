@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Lock, User, AlertCircle, ArrowRight, ShieldCheck, Eye, EyeOff, UserPlus } from 'lucide-react';
-import { loginUser } from '../services/api';
+import { Lock, User, AlertCircle, ArrowRight, ShieldCheck, Eye, EyeOff, UserPlus, Sparkles } from 'lucide-react';
+import { loginUser, seedDemoData } from '../services/api';
 import { RegisterForm } from './RegisterForm';
 import { useBranding } from '../contexts/BrandingContext';
 import type { UserProfile } from '../types';
@@ -18,6 +18,27 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [demoLoading, setDemoLoading] = useState(false);
+
+  const handleQuickDemo = async () => {
+    setDemoLoading(true);
+    setError(null);
+    try {
+      await seedDemoData(true);
+      // Login como Engenharia de Qualidade / SGI para visibilidade total
+      try {
+        const res = await loginUser('qualidade', '123456');
+        onLoginSuccess(res.user, res.token);
+      } catch {
+        const resAdmin = await loginUser('admin', 'admin123');
+        onLoginSuccess(resAdmin.user, resAdmin.token);
+      }
+    } catch (err: any) {
+      setError(err.message || 'Falha ao semear dados de demonstração.');
+    } finally {
+      setDemoLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -186,12 +207,27 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
               </div>
             </form>
 
+            {/* Industrial Demo Mode (Sandbox 1-Click) */}
+            <div className="mt-5 pt-4 border-t border-slate-100 flex flex-col items-center gap-1.5">
+              <button
+                type="button"
+                onClick={handleQuickDemo}
+                disabled={demoLoading || loading}
+                className="w-full py-2.5 px-3 bg-slate-900 hover:bg-slate-800 text-amber-300 hover:text-amber-200 border border-amber-400/40 rounded-lg text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs cursor-pointer disabled:opacity-50"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+                <span>{demoLoading ? 'Carregando Demonstração...' : '⚡ Modo Demonstração (Sandbox 1-Clique)'}</span>
+              </button>
+              <span className="text-[10px] text-slate-400 text-center font-medium">
+                Popula instantaneamente com 9 ocorrências fabris cobrindo todas as etapas (ISO 9001).
+              </span>
+            </div>
           </>
         )}
       </div>
 
       <div className="text-center text-[11px] text-slate-500">
-        Grupo Tec • Sistema de Gestão Integrada (SGI) • Ambiente Seguro
+        {branding.company_name || 'nexRNC Enterprise'} • Sistema de Gestão Integrada (SGI) • Ambiente Seguro
       </div>
     </div>
   );

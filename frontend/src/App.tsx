@@ -164,6 +164,7 @@ export function App() {
             setIsNewModalOpen(true);
           }
         }}
+        onDataRefresh={fetchRncs}
       />
 
       {/* Main Dashboard Container */}
@@ -172,7 +173,7 @@ export function App() {
           <BiDashboard onOpenDetail={(rncId) => setSelectedRncIdForDetail(rncId)} />
         ) : (
           <>
-            {/* Executive Context Banner identical to TecDesk */}
+            {/* Executive Context Banner */}
             <div className="bg-gradient-to-r from-tec-navy via-tec-navy-light to-tec-navy rounded-xl p-5 mb-6 text-white shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2 mb-1">
@@ -187,7 +188,7 @@ export function App() {
                   Gestão de Não Conformidades (RNC) & Controle de SLA
                 </h2>
                 <p className="text-xs text-slate-300 mt-1">
-                  Conectado ao SQL Server corporativo • Sessão ativa de: <strong className="text-white">{currentUser.name}</strong> ({currentUser.role})
+                  Conectado à base corporativa • Sessão ativa de: <strong className="text-white">{currentUser.name}</strong> ({currentUser.role})
                 </p>
               </div>
 

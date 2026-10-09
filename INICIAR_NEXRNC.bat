@@ -1,40 +1,36 @@
 @echo off
-title TEC VIDRO - SISTEMA DE RNCS (Porta 3010)
+title nexRNC Enterprise - Servidor de Gestao da Qualidade (Porta 3010)
 color 0B
 
 echo ======================================================================
-echo       TEC VIDRO - SISTEMA DE GESTAO DE RNCS (SERVIDOR 10.1.1.7)
+echo       nexRNC ENTERPRISE - PLATAFORMA DE GESTAO DE RNCS
 echo ======================================================================
 echo.
-echo Host: 10.1.1.7 ^| Porta: 3010
-echo Banco de Dados: SQL Server 10.1.1.8 (TEC_DESK) - Schema rnc.*
+echo Porta Padrao: 3010
+echo Arquitetura: FastAPI + React SPA Integrados
 echo.
 
-REM 1. Desacoplamento de dados: fotos e videos ficam em pasta permanente fora do app
-if not exist "C:\nexrnc_dados\uploads" (
-    mkdir "C:\nexrnc_dados\uploads" 2>nul
+REM 1. Diretorio de anexos
+if not exist "data\uploads" (
+    mkdir "data\uploads" 2>nul
 )
-set "UPLOADS_DIR=C:\nexrnc_dados\uploads"
 
-
-
-echo [OK] Diretorio de Anexos Permanente: C:\nexrnc_dados\uploads
-echo [OK] Python Portatil embutido pronto.
+echo [OK] Diretorio de Anexos: data\uploads
 echo [OK] Frontend e Backend integrados na porta 3010.
 echo.
 echo ======================================================================
-echo   O SISTEMA DE RNCS ESTA ATIVO E PRONTO PARA ACESSO!
+echo   O SISTEMA nexRNC ESTA PRONTO PARA INICIAR!
 echo.
-echo   - Acesso Local no Servidor:  http://localhost:3010
-echo   - Acesso na Rede da Empresa: http://10.1.1.7:3010
-echo.
-echo   [DICA] Para testar a conexao com o SQL Server 10.1.1.8, execute:
-echo          TESTAR_CONEXAO_SQLSERVER.bat
+echo   - Acesso Local:  http://localhost:3010
 echo.
 echo   [IMPORTANTE] Mantenha esta janela aberta para o sistema continuar no ar.
-echo   Para desligar o sistema, basta fechar esta janela.
+echo   Para desligar o sistema, basta fechar esta janela ou pressionar Ctrl+C.
 echo ======================================================================
 echo.
 
 cd /d "%~dp0"
-"%~dp0python\python.exe" -m uvicorn main:app --app-dir "%~dp0backend" --host 0.0.0.0 --port 3010
+if exist "%~dp0python\python.exe" (
+    "%~dp0python\python.exe" -m uvicorn main:app --app-dir "%~dp0backend" --host 0.0.0.0 --port 3010
+) else (
+    python -m uvicorn main:app --app-dir "%~dp0backend" --host 0.0.0.0 --port 3010
+)

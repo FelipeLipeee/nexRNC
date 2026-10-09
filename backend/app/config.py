@@ -43,7 +43,7 @@ CORS_ORIGINS = ["*"]
 
 # Parametros corporativos SQL Server
 DB_SERVER = os.getenv("DB_SERVER", "localhost")
-DB_DATABASE = os.getenv("DB_DATABASE", "TEC_DESK")
+DB_DATABASE = os.getenv("DB_DATABASE", "NEXRNC_DB")
 DB_USER = os.getenv("DB_USER", "sa")
 DB_PASSWORD = os.getenv("DB_PASSWORD", "")
 DB_PORT = os.getenv("DB_PORT", "1433")

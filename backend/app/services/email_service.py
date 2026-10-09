@@ -25,15 +25,15 @@ SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.office365.com")
 SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
 SMTP_USER = os.getenv("SMTP_USER", "")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
-SMTP_FROM = os.getenv("SMTP_FROM", f"nexRNC Grupo Tec <{SMTP_USER}>" if SMTP_USER else "nexRNC <noreply@tecvidro.com.br>")
+SMTP_FROM = os.getenv("SMTP_FROM", f"nexRNC <{SMTP_USER}>" if SMTP_USER else "nexRNC <noreply@empresa.com.br>")
 SMTP_TLS = _get_env_bool("SMTP_TLS", True)
-APP_BASE_URL = os.getenv("APP_BASE_URL", "http://10.1.1.7:3010")
+APP_BASE_URL = os.getenv("APP_BASE_URL", "http://localhost:3010")
 
-# Contas e prefixos que NUNCA devem receber notificacoes (faturamento e vendedores externos)
-BLOCKED_RECIPIENT_PREFIXES = ("faturamento", "g.dantas", "r.bessa")
+# Contas e prefixos que NUNCA devem receber notificacoes
+BLOCKED_RECIPIENT_PREFIXES = ("faturamento", "financeiro_bloqueado")
 
 def _sanitize_recipients(recipients: List[str]) -> List[str]:
-    """Remove permanentemente destinatarios bloqueados (faturamento e vendedores externos)."""
+    """Remove permanentemente destinatarios vazios ou bloqueados."""
     clean = []
     for r in recipients:
         item = r.strip()
@@ -45,30 +45,24 @@ def _sanitize_recipients(recipients: List[str]) -> List[str]:
             clean.append(item)
     return clean
 
-# Mapeamento de e-mails setoriais (suporta multiplos separados por virgula)
+# Mapeamento de e-mails setoriais (suporta multiplos separados por virgula via .env)
 SECTOR_EMAILS = {
-    "comercial": _sanitize_recipients([e.strip() for e in os.getenv("EMAIL_COMERCIAL", "coord.comercial@grupotec.com.br").split(",") if e.strip()]),
-    "expedicao": _sanitize_recipients([e.strip() for e in os.getenv("EMAIL_EXPEDICAO", "coord.expedicao@grupotec.com.br").split(",") if e.strip()]),
+    "comercial": _sanitize_recipients([e.strip() for e in os.getenv("EMAIL_COMERCIAL", "").split(",") if e.strip()]),
+    "expedicao": _sanitize_recipients([e.strip() for e in os.getenv("EMAIL_EXPEDICAO", "").split(",") if e.strip()]),
     "producao": _sanitize_recipients([e.strip() for e in os.getenv("EMAIL_PRODUCAO", "").split(",") if e.strip()]),
-    "fiscal": _sanitize_recipients([e.strip() for e in os.getenv("EMAIL_COMPRAS", os.getenv("EMAIL_FISCAL", "compras@grupotec.com.br,coord.compras@grupotec.com.br")).split(",") if e.strip()]),
-    "compras": _sanitize_recipients([e.strip() for e in os.getenv("EMAIL_COMPRAS", "compras@grupotec.com.br,coord.compras@grupotec.com.br").split(",") if e.strip()]),
-    "estoque": _sanitize_recipients([e.strip() for e in os.getenv("EMAIL_ESTOQUE", "coord.estoque@grupotec.com.br").split(",") if e.strip()]),
-    "estoque_beneficiado": _sanitize_recipients([e.strip() for e in os.getenv("EMAIL_ESTOQUE", "coord.estoque@grupotec.com.br").split(",") if e.strip()]),
-    "estoque_acessorios": _sanitize_recipients([e.strip() for e in os.getenv("EMAIL_ESTOQUE", "coord.estoque@grupotec.com.br").split(",") if e.strip()]),
-    "estoque_componentes": _sanitize_recipients([e.strip() for e in os.getenv("EMAIL_ESTOQUE", "coord.estoque@grupotec.com.br").split(",") if e.strip()]),
-    "sgi": _sanitize_recipients([e.strip() for e in os.getenv("EMAIL_SGI", "coord.processos@grupotec.com.br").split(",") if e.strip()]),
-    "financeiro": _sanitize_recipients([e.strip() for e in os.getenv("EMAIL_FINANCEIRO", "p.mariano@grupotec.com.br").split(",") if e.strip()]),
+    "fiscal": _sanitize_recipients([e.strip() for e in os.getenv("EMAIL_FISCAL", "").split(",") if e.strip()]),
+    "compras": _sanitize_recipients([e.strip() for e in os.getenv("EMAIL_COMPRAS", "").split(",") if e.strip()]),
+    "estoque": _sanitize_recipients([e.strip() for e in os.getenv("EMAIL_ESTOQUE", "").split(",") if e.strip()]),
+    "sgi": _sanitize_recipients([e.strip() for e in os.getenv("EMAIL_SGI", "").split(",") if e.strip()]),
+    "financeiro": _sanitize_recipients([e.strip() for e in os.getenv("EMAIL_FINANCEIRO", "").split(",") if e.strip()]),
     "gestao": _sanitize_recipients([e.strip() for e in os.getenv("EMAIL_GESTAO", "").split(",") if e.strip()]),
 }
 
 SECTOR_NAMES = {
     "comercial": "Comercial / Vendas", "expedicao": "Expedição / Logística",
-    "producao": "Produção / Inspeção Técnica", "fiscal": "Compras / Devoluções",
-    "compras": "Compras / Suprimentos", "sgi": "SGI / Gestão da Qualidade",
+    "producao": "Produção / Inspeção Técnica", "fiscal": "Fiscal / Escrituração",
+    "compras": "Compras / Suprimentos", "sgi": "Gestão da Qualidade / SGI",
     "financeiro": "Financeiro / Controladoria", "gestao": "Gestão e Diretoria",
-    "estoque_beneficiado": "Estoque Beneficiado (Perfis)",
-    "estoque_acessorios": "Estoque de Acessórios",
-    "estoque_componentes": "Estoque de Componentes",
     "estoque": "Coordenação de Estoque",
 }
 
@@ -87,30 +81,17 @@ STEP_TITLES = {
     "concluido": "RNC Concluída", "cancelado": "RNC Cancelada",
 }
 
-USUARIOS_EMAIL_MAP = {
-    # Vendedoras comerciais
-    "vendas01": "vendas01@grupotec.com.br", "rafa": "vendas01@grupotec.com.br", "rafaela": "vendas01@grupotec.com.br", "pacheco": "vendas01@grupotec.com.br",
-    "vendas02": "vendas02@grupotec.com.br", "ingrid": "vendas02@grupotec.com.br",
-    "vendas03": "vendas03@grupotec.com.br", "fran": "vendas03@grupotec.com.br",
-    "vendas04": "vendas04@grupotec.com.br", "claudia": "vendas04@grupotec.com.br",
-    "coord.comercial": "coord.comercial@grupotec.com.br", "caroline": "coord.comercial@grupotec.com.br",
-    # Administracao e TI
-    "ti01": "ti01@grupotec.com.br",
-    "ti02": "ti02@grupotec.com.br", "pinete": "ti02@grupotec.com.br",
-    "gestor": "ti02@grupotec.com.br",
-    "germano": "germano@grupotec.com.br",
-    "vinicius": "vinicius@grupotec.com.br",
-}
+USUARIOS_EMAIL_MAP: Dict[str, str] = {}
 
 def _resolve_creator_emails(rnc_data: Dict[str, Any]) -> List[str]:
-    """Retorna estritamente o e-mail de quem abriu a RNC + o coordenador do comercial."""
+    """Retorna o e-mail de quem abriu a RNC + o coordenador do comercial se configurados."""
     criador = str(rnc_data.get("criado_por") or "").strip().lower()
     emails = []
 
-    # 1. Coordenador Comercial SEMPRE recebe
-    coord = os.getenv("EMAIL_COORD_COMERCIAL", "coord.comercial@grupotec.com.br").strip()
+    coord = os.getenv("EMAIL_COORD_COMERCIAL", "").strip()
     if coord:
         emails.append(coord)
+
 
     # 2. Localiza o e-mail unico do criador
     creator_email = None

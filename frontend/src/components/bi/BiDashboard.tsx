@@ -71,7 +71,7 @@ export const BiDashboard: React.FC<BiDashboardProps> = ({ onOpenDetail }) => {
           </h2>
           <p className="text-xs text-slate-300 mt-1 flex items-center gap-1.5">
             <Database className="w-3.5 h-3.5 text-emerald-400" />
-            Consolidado em tempo real direto da base <strong className="text-white">TEC_DESK (10.1.1.8)</strong>
+            Consolidado analítico em tempo real direto do <strong className="text-white">Banco de Dados Ativo</strong>
           </p>
         </div>
 

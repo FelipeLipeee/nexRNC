@@ -197,4 +197,33 @@ export async function uploadBrandingLogo(file: File): Promise<BrandingSettings> 
   return res.json();
 }
 
+export async function getDemoStatus(): Promise<{ total_rncs: number; demo_rncs: number; is_demo_active: boolean; db_mode: string }> {
+  const res = await fetch(`${getBaseUrl()}/demo/status`);
+  if (!res.ok) throw new Error('Falha ao consultar status de demonstração');
+  return res.json();
+}
+
+export async function seedDemoData(clearExisting = true): Promise<{ success: boolean; message: string; inserted_count: number }> {
+  const res = await fetch(`${getBaseUrl()}/demo/seed?clear_existing=${clearExisting}`, {
+    method: 'POST',
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: 'Falha ao carregar dados de demonstração' }));
+    throw new Error(err.detail || 'Falha ao carregar demonstração');
+  }
+  return res.json();
+}
+
+export async function resetData(onlyDemo = false): Promise<{ success: boolean; message: string }> {
+  const res = await fetch(`${getBaseUrl()}/demo/reset?only_demo=${onlyDemo}`, {
+    method: 'POST',
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: 'Falha ao resetar dados' }));
+    throw new Error(err.detail || 'Falha ao resetar dados');
+  }
+  return res.json();
+}
+
+
 

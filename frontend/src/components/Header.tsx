@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Plus, User, LayoutGrid, ListFilter, LogOut, BarChart3, Palette } from 'lucide-react';
+import { Plus, User, LayoutGrid, ListFilter, LogOut, BarChart3, Palette, Sparkles } from 'lucide-react';
 import type { UserProfile, SectorType } from '../types';
 import { isExecutiveUser, canCreateRnc } from '../types';
 import { useBranding } from '../contexts/BrandingContext';
 import { BrandingModal } from './BrandingModal';
+import { DemoSandboxModal } from './DemoSandboxModal';
 
 interface HeaderProps {
   currentUser: UserProfile;
@@ -11,6 +12,7 @@ interface HeaderProps {
   activeView: 'queue' | 'kanban' | 'bi';
   onToggleView: (view: 'queue' | 'kanban' | 'bi') => void;
   onOpenNewRnc: () => void;
+  onDataRefresh?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -19,9 +21,11 @@ export const Header: React.FC<HeaderProps> = ({
   activeView,
   onToggleView,
   onOpenNewRnc,
+  onDataRefresh,
 }) => {
   const { branding } = useBranding();
   const [showBrandingModal, setShowBrandingModal] = useState(false);
+  const [showDemoModal, setShowDemoModal] = useState(false);
 
   const getSectorBadge = (sector: SectorType) => {
     switch (sector) {
@@ -138,13 +142,22 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* White-Label Branding Button (Apenas Executivos / TI / Gestao) */}
           {isExecutiveUser(currentUser) && (
-            <button
-              onClick={() => setShowBrandingModal(true)}
-              title="Personalizar Marca e White-Label"
-              className="p-2 rounded-lg bg-tec-navy-dark hover:bg-orange-500/20 text-slate-300 hover:text-orange-400 border border-gray-700/60 transition-colors cursor-pointer"
-            >
-              <Palette className="w-4 h-4" />
-            </button>
+            <>
+              <button
+                onClick={() => setShowDemoModal(true)}
+                title="Sandbox & Demonstração Industrial"
+                className="p-2 rounded-lg bg-tec-navy-dark hover:bg-amber-500/20 text-slate-300 hover:text-amber-400 border border-gray-700/60 transition-colors cursor-pointer"
+              >
+                <Sparkles className="w-4 h-4 text-amber-400" />
+              </button>
+              <button
+                onClick={() => setShowBrandingModal(true)}
+                title="Personalizar Marca e White-Label"
+                className="p-2 rounded-lg bg-tec-navy-dark hover:bg-orange-500/20 text-slate-300 hover:text-orange-400 border border-gray-700/60 transition-colors cursor-pointer"
+              >
+                <Palette className="w-4 h-4" />
+              </button>
+            </>
           )}
 
           {/* Logout Button */}
@@ -162,6 +175,13 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* White-Label Settings Modal */}
       <BrandingModal isOpen={showBrandingModal} onClose={() => setShowBrandingModal(false)} />
+
+      {/* Industrial Sandbox Modal */}
+      <DemoSandboxModal
+        isOpen={showDemoModal}
+        onClose={() => setShowDemoModal(false)}
+        onDataChanged={onDataRefresh}
+      />
     </header>
   );
 };

@@ -1,11 +1,11 @@
 -- =====================================================================
--- GRUPO TEC - TECVIDRO: SCRIPT DE IMPLANTAÇÃO DO MÓDULO RNC NO TEC_DESK
--- SCHEMA DEDICADO: rnc.* (ISOLADO DAS TABELAS ORIGINAIS DO TEC_DESK)
--- BANCO DE DADOS: TEC_DESK (SQL Server 2017+)
+-- nexRNC ENTERPRISE: SCRIPT DE IMPLANTAÇÃO DO SCHEMA E TABELAS RNC
+-- SCHEMA DEDICADO: rnc.* (ISOLADO E COMPATÍVEL COM SQL SERVER 2017+)
+-- BANCO DE DADOS: Parametrizável (ajuste o USE conforme seu ambiente)
 -- =====================================================================
 
-USE TEC_DESK;
-GO
+-- USE [NEXRNC_DB];
+-- GO
 
 -- 1. CRIAÇÃO DO SCHEMA ISOLADO
 IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'rnc')
@@ -286,5 +286,5 @@ END
 GO
 
 PRINT '=====================================================================';
-PRINT 'ESTRUTURA DO MODULO RNC IMPLANTADA COM SUCESSO NO BANCO TEC_DESK!';
+PRINT 'ESTRUTURA DO MODULO nexRNC IMPLANTADA COM SUCESSO NO BANCO DE DADOS!';
 PRINT '=====================================================================';

@@ -1,6 +1,6 @@
 """
 email_templates.py - Renderizacao visual dos e-mails institucionais do nexRNC
-Gera HTML corporativo responsivo e padronizado com a marca do Grupo Tec.
+Gera HTML corporativo responsivo e padronizado com identidade visual white-label.
 """
 
 def render_email_template(
@@ -13,9 +13,10 @@ def render_email_template(
     produto: str,
     nota_fiscal: str,
     details_html: str,
-    cta_text: str = "Acessar RNC no Sistema"
+    cta_text: str = "Acessar RNC no Sistema",
+    company_name: str = "nexRNC Enterprise"
 ) -> str:
-    """Gera um e-mail HTML executivo com identidade visual institucional do Grupo Tec."""
+    """Gera um e-mail HTML executivo com identidade visual corporativa parametrizada."""
     return f"""
     <!DOCTYPE html>
     <html lang="pt-BR">
@@ -42,7 +43,7 @@ def render_email_template(
     <body>
       <div class="wrapper">
         <div class="header">
-          <div class="brand-title">nexRNC • Grupo Tec</div>
+          <div class="brand-title">{company_name}</div>
           <div class="brand-sub">Sistema de Gestão de Não Conformidades & SGI</div>
         </div>
         <div class="body">
@@ -71,9 +72,8 @@ def render_email_template(
         </div>
         <div class="footer">
           Mensagem automática enviada pelo sistema nexRNC • Hospedado em {app_base_url}<br>
-          Grupo Tecvidro • Sistema de Gestão Integrada (ISO 9001)
+          {company_name} • Sistema de Gestão Integrada (ISO 9001:2015)
         </div>
       </div>
     </body>
-    </html>
     """

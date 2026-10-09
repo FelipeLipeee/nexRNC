@@ -10,7 +10,7 @@ from app.database import get_available_driver, get_sql_conn_string
 
 def run_diagnostics():
     print("=" * 70)
-    print("   DIAGNOSTICO DE CONEXAO nexRNC COM SQL SERVER (10.1.1.8)")
+    print(f"   DIAGNOSTICO DE CONEXAO nexRNC COM SQL SERVER ({DB_SERVER})")
     print("=" * 70)
     print(f"Servidor Alvo:  {DB_SERVER}:{DB_PORT}")
     print(f"Base de Dados:  {DB_DATABASE}")
@@ -53,7 +53,7 @@ def run_diagnostics():
         return 1
 
     # 3. Validacao do Schema e Tabelas
-    print("\n[3] Validando estrutura do schema 'rnc' no TEC_DESK:")
+    print(f"\n[3] Validando estrutura do schema 'rnc' no {DB_DATABASE}:")
     cursor.execute("""
     SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES 
     WHERE TABLE_SCHEMA = 'rnc'

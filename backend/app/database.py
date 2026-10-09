@@ -67,10 +67,10 @@ def detect_db_mode(force_refresh: bool = False) -> str:
         if row:
             _cached_mode = "sql_server"
             _last_error = None
-            print(f"[NEXRNC] Conexao com SQL Server 10.1.1.8 ({DB_DATABASE}) estabelecida com sucesso!")
+            print(f"[NEXRNC] Conexao com SQL Server {DB_SERVER} ({DB_DATABASE}) estabelecida com sucesso!")
             return "sql_server"
         else:
-            _last_error = "Tabela rnc.ocorrencia nao encontrada no banco TEC_DESK. Execute criar_schema_e_tabelas_rnc.sql no SSMS."
+            _last_error = f"Tabela rnc.ocorrencia nao encontrada no banco {DB_DATABASE}. Execute criar_schema_e_tabelas_rnc.sql no SSMS."
             if ALLOW_SQLITE_FALLBACK:
                 _cached_mode = "sqlite"
                 print(f"[NEXRNC ALERTA - CONTINGENCIA] {_last_error} Usando SQLite local.")
@@ -82,10 +82,10 @@ def detect_db_mode(force_refresh: bool = False) -> str:
         _last_error = str(e)
         if ALLOW_SQLITE_FALLBACK:
             _cached_mode = "sqlite"
-            print(f"[NEXRNC ALERTA - CONTINGENCIA] Falha SQL Server 10.1.1.8 ({e}). Usando SQLite local.")
+            print(f"[NEXRNC ALERTA - CONTINGENCIA] Falha SQL Server {DB_SERVER} ({e}). Usando SQLite local.")
             return "sqlite"
         _cached_mode = "error"
-        print(f"[NEXRNC ERRO CRITICO] Falha ao conectar no SQL Server 10.1.1.8: {e}")
+        print(f"[NEXRNC ERRO CRITICO] Falha ao conectar no SQL Server {DB_SERVER}: {e}")
         return "error"
 
 def serialize_val(v: Any) -> Any:
@@ -116,11 +116,11 @@ def get_connection():
             import pyodbc
             return pyodbc.connect(get_sql_conn_string(), timeout=10)
         except Exception as e:
-            raise RuntimeError(f"Erro ao conectar com SQL Server 10.1.1.8: {e}")
+            raise RuntimeError(f"Erro ao conectar com SQL Server {DB_SERVER}: {e}")
 
     if mode == "error":
         raise RuntimeError(
-            f"FALHA CRITICA DE BANCO DE DADOS: O sistema opera 100% no SQL Server 10.1.1.8 ({DB_DATABASE}), "
+            f"FALHA CRITICA DE BANCO DE DADOS: O sistema opera no SQL Server {DB_SERVER} ({DB_DATABASE}), "
             f"mas a conexao ou schema falhou ({_last_error}). "
             f"O fallback para SQLite esta desativado para garantir a integridade dos dados."
         )
@@ -162,7 +162,7 @@ def test_db_connection() -> Dict[str, Any]:
             "status": "offline",
             "schema": "rnc",
             "detail": _last_error or "Tabela rnc.ocorrencia ausente ou porta 1433 inacessivel.",
-            "solucao": "Execute o script 'backend/sql/criar_schema_e_tabelas_rnc.sql' no SSMS ou verifique conectividade com 10.1.1.8."
+            "solucao": f"Execute o script 'backend/sql/criar_schema_e_tabelas_rnc.sql' no SSMS ou verifique conectividade com {DB_SERVER}."
         }
 
     return {
@@ -257,7 +257,7 @@ def init_db():
 
     if mode == "error":
         print("[NEXRNC ERRO CRITICO] O servidor nao iniciou em SQLite porque ALLOW_SQLITE_FALLBACK=false.")
-        print("[NEXRNC ERRO CRITICO] Execute criar_schema_e_tabelas_rnc.sql no SSMS (10.1.1.8 - TEC_DESK).")
+        print(f"[NEXRNC ERRO CRITICO] Execute criar_schema_e_tabelas_rnc.sql no SSMS ({DB_SERVER} - {DB_DATABASE}).")
         return
 
     # Inicializa SQLite local apenas se autorizado expressamente

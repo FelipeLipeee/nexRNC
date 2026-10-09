@@ -78,7 +78,7 @@ export const ImageViewerModal: React.FC<ImageViewerModalProps> = ({
 
         {/* Footer info */}
         <div className="px-4 py-2 bg-slate-950 text-slate-400 text-[11px] flex items-center justify-between border-t border-slate-800">
-          <span>Visualizador de Evidências • Grupo Tec</span>
+          <span>Visualizador de Evidências • Inspeção Técnica</span>
           <span className="font-mono text-[10px] text-slate-500">Alta Resolução</span>
         </div>
       </div>

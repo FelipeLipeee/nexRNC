@@ -1,6 +1,6 @@
 -- =====================================================================
--- GRUPO TEC - TECVIDRO: LIMPEZA DE DADOS DE TESTE DO MODULO RNC
--- BANCO DE DADOS: TEC_DESK
+-- nexRNC ENTERPRISE: LIMPEZA DE DADOS DE TESTE DO MÓDULO RNC
+-- BANCO DE DADOS: Parametrizável (ajuste o USE conforme seu ambiente)
 -- SCHEMA: rnc.*
 -- =====================================================================
 -- Este script apaga todas as RNCs, itens, historicos e anexos,
@@ -8,8 +8,8 @@
 -- Os USUARIOS e SENHAS (rnc.usuario) NAO sao afetados.
 -- =====================================================================
 
-USE TEC_DESK;
-GO
+-- USE [NEXRNC_DB];
+-- GO
 
 PRINT 'Iniciando limpeza de dados do modulo RNC...';
 

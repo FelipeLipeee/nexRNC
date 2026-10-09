@@ -1,23 +1,30 @@
 ======================================================================
-  PROJETO: nexRNC - Sistema de Gestao de Nao Conformidades
-  VERSAO:  1.5.0 (Botao Voltar Etapa, Reencaminhamento e Isencao SLA Expedicao)
-  DATA:    08/10/2026 16:30
+  PROJETO: nexRNC - Sistema de Gestao de Nao Conformidades Enterprise
+  VERSAO:  2.0.0 (White-Label B2B, Demo Mode Sandbox, Multi-Database)
+  DATA:    09/10/2026
 ======================================================================
 
-MODIFICACOES DESTA VERSAO (v1.5.0):
-1. BOTAO VOLTAR ETAPA (FLOW RETURN COM AUDITORIA):
-   - Qualquer setor (ou gestao) pode retornar a RNC para a etapa/setor imediatamente anterior caso falte informacao tecnica ou documento fiscal.
-   - Modal com justificativa obrigatoria (minimo de 5 caracteres).
+MODIFICACOES DESTA VERSAO (v2.0.0):
+1. WHITE-LABEL COMPLETO:
+   - Identidade visual configuravel dinamicamente (nome da empresa, logo customizado).
+   - Suporte a SQLite automatico ou Microsoft SQL Server corporativo.
+   - Totalmente agnostico de clientes ou ambientes especificos.
+
+2. INDUSTRIAL DEMO MODE (SANDBOX 1-CLIQUE):
+   - Populacao instantanea com dados industriais realistas cobrindo todas as etapas de fluxo.
+   - Ferramenta de demonstracao para prospects B2B, gestores e auditorias ISO 9001.
+
+3. BOTAO VOLTAR ETAPA (FLOW RETURN COM AUDITORIA):
+   - Qualquer setor (ou gestao) pode retornar a RNC para a etapa/setor anterior com justificativa obrigatoria.
    - Auditoria completa: motivo, operador e data gravados no historico da RNC.
-   - Notificacao automatica por e-mail enviada para o setor destinatario com prefixo [RETORNO DE ETAPA].
-   - Suporte completo a re-encaminhamento comercial a partir da etapa 1 (Abertura).
+   - Notificacao automatica por e-mail com prefixo [RETORNO DE ETAPA].
 
-2. AJUSTE DE SLA DA EXPEDICAO & ABERTURA:
-   - A Expedicao e Abertura Comercial ficam isentas de contagem regressiva de SLA e alertas de estouro enquanto aguardam a chegada fisica da mercadoria ("Aguardando Recebimento").
-   - O prazo de analise tecnica (36h) passa a contar a partir do momento em que a Expedicao conclui a triagem e passa o bastao para a Producao.
-   - Blindagem contra restricao NOT NULL na coluna sla_deadline do SQL Server (TEC_DESK.rnc.ocorrencia).
+4. SLA FLEXIVEL & RESILIENTE:
+   - A Expedicao e Abertura Comercial ficam isentas de estouro enquanto aguardam chegada fisica de materiais.
+   - Contagem regressiva ativa para analise tecnica e producao.
+   - Blindagem contra restricao NOT NULL na coluna sla_deadline do banco (rnc.ocorrencia).
 
-3. CORRECOES DE INTERFACE & CICLO DE VIDA REACT:
-   - Blindagem contra violacoes de ciclo de vida de React Hooks (Erro #310) nos modais de detalhe e handoff.
-   - Botoes de acao integrados no RncDetailModal e StepHandoffModal.
+5. ARQUITETURA REACT 19 & FASTAPI:
+   - ErrorBoundary global com recuperacao suave de falhas de renderizacao.
+   - Build estatico embarcado servido unificadamente na porta 3010.
 ======================================================================
