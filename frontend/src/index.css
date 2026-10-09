@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+@theme {
+  --color-tec-navy: #13273e;
+  --color-tec-navy-light: #1c3553;
+  --color-tec-navy-dark: #0c1a2b;
+  --color-tec-orange: #e35210;
+  --color-tec-orange-hover: #c9460b;
+  --color-tec-orange-light: #fff4ee;
+  --color-tec-cream: #f5f1eb;
+}
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  background-color: #f8f9fa;
+  color: #0f172a;
+  font-family: 'Montserrat', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Scrollbar styled matching TecDesk */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #e35210;
+}

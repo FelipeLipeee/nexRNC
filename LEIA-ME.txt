@@ -1,0 +1,40 @@
+======================================================================
+  GUIA DE INSTALACAO - NEXRNC NO SERVIDOR (10.1.1.7)
+======================================================================
+
+Passo 1: Copiar esta pasta
+----------------------------------------------------------------------
+Copie a pasta inteira "NEXRNC_SERVIDOR" para o Servidor 10.1.1.7.
+(Pode colar na Area de Trabalho ou em C:\Sistemas\NEXRNC_SERVIDOR).
+
+
+Passo 2: Liberar a porta 3010 no Firewall (Apenas 1 vez)
+----------------------------------------------------------------------
+Dentro do servidor, clique com o BOTAO DIREITO no arquivo:
+  --> LIBERAR_FIREWALL_3010.bat
+E selecione: "Executar como Administrador".
+
+
+Passo 3: Iniciar o Sistema (Os 2 Cliques!)
+----------------------------------------------------------------------
+De dois cliques normalmente no arquivo:
+  --> INICIAR_NEXRNC.bat
+
+Uma janela preta do Prompt de Comando abrira e ficara ativa, mostrando:
+"[OK] O SISTEMA DE RNCS ESTA ATIVO E PRONTO PARA ACESSO!".
+Mantenha essa janela aberta.
+
+
+Passo 4: Acessar no Navegador
+----------------------------------------------------------------------
+Em qualquer computador da empresa, basta abrir:
+  http://10.1.1.7:3010
+
+
+OBSERVACOES TECNICAS:
+----------------------------------------------------------------------
+- O pacote ja possui o Python e todas as bibliotecas embutidas na pasta "python".
+- Nao precisa instalar Python, Node.js nem pacotes extras no Windows do servidor.
+- Tudo roda de forma unificada e limpa em uma unica porta (3010).
+- Suporta conexao direta com SQL Server (10.1.1.8) e contingencia local SQLite automatica.
+======================================================================
