@@ -1,40 +1,48 @@
 ======================================================================
-  GUIA DE INSTALACAO - NEXRNC NO SERVIDOR (10.1.1.7)
+  nexRNC ENTERPRISE - GUIA RAPIDO DE EXECUCAO LOCAL E SERVIDOR
 ======================================================================
 
-Passo 1: Copiar esta pasta
+COMO RODAR NO SEU COMPUTADOR (1-CLIQUE):
 ----------------------------------------------------------------------
-Copie a pasta inteira "NEXRNC_SERVIDOR" para o Servidor 10.1.1.7.
-(Pode colar na Area de Trabalho ou em C:\Sistemas\NEXRNC_SERVIDOR).
+1. Certifique-se de ter o Python instalado (versao 3.10 ou superior).
+   Se nao tiver, baixe em: https://www.python.org/downloads/
+   (Marque a caixinha: "Add Python to PATH" durante a instalacao).
+
+2. De dois cliques no arquivo:
+   --> INICIAR_NEXRNC.bat
+
+3. O script fara tudo sozinho:
+   - Verifica ou instala as dependencias necessarias (FastAPI, Uvicorn, etc).
+   - Inicia o servidor local na porta 3010.
+   - Abre automaticamente o navegador em: http://localhost:3010.
+
+4. Na tela de login, clique no botao dourado:
+   --> "⚡ Modo Demonstracao (Sandbox 1-Clique)"
+   O sistema carregara 9 ocorrencias industriais reais e abrira logado como
+   Coordenador de Qualidade (SGI) com painel analitico de BI e esteira ativa!
 
 
-Passo 2: Liberar a porta 3010 no Firewall (Apenas 1 vez)
+COMO FUNCIONA?
 ----------------------------------------------------------------------
-Dentro do servidor, clique com o BOTAO DIREITO no arquivo:
-  --> LIBERAR_FIREWALL_3010.bat
-E selecione: "Executar como Administrador".
+- NAO precisa de Node.js / npm:
+  O frontend React ja esta compilado e embarcado dentro de "backend\static".
+- NAO precisa de SQL Server:
+  O sistema usa banco SQLite local por padrao (cria o arquivo "backend\data\nexrnc.db"
+  automaticamente na primeira execucao).
+- ARQUITETURA UNIFICADA:
+  Tudo roda em um unico processo na porta 3010, eliminando problemas de CORS.
 
 
-Passo 3: Iniciar o Sistema (Os 2 Cliques!)
+COMO CONECTAR NO SQL SERVER DA EMPRESA (OPCIONAL):
 ----------------------------------------------------------------------
-De dois cliques normalmente no arquivo:
-  --> INICIAR_NEXRNC.bat
-
-Uma janela preta do Prompt de Comando abrira e ficara ativa, mostrando:
-"[OK] O SISTEMA DE RNCS ESTA ATIVO E PRONTO PARA ACESSO!".
-Mantenha essa janela aberta.
-
-
-Passo 4: Acessar no Navegador
-----------------------------------------------------------------------
-Em qualquer computador da empresa, basta abrir:
-  http://10.1.1.7:3010
-
-
-OBSERVACOES TECNICAS:
-----------------------------------------------------------------------
-- O pacote ja possui o Python e todas as bibliotecas embutidas na pasta "python".
-- Nao precisa instalar Python, Node.js nem pacotes extras no Windows do servidor.
-- Tudo roda de forma unificada e limpa em uma unica porta (3010).
-- Suporta conexao direta com SQL Server (10.1.1.8) e contingencia local SQLite automatica.
+Se desejar rodar em producao com banco de dados corporativo SQL Server:
+1. Copie o arquivo ".env.example" para ".env".
+2. Configure:
+   USE_SQL_SERVER=true
+   DB_SERVER=ip_ou_nome_do_servidor
+   DB_DATABASE=nome_do_banco
+   DB_USER=seu_usuario
+   DB_PASSWORD=sua_senha
+3. Execute o script "backend\sql\criar_schema_e_tabelas_rnc.sql" no SQL Server.
+4. Ao rodar "INICIAR_NEXRNC.bat", o sistema conectara diretamente no SQL Server!
 ======================================================================
