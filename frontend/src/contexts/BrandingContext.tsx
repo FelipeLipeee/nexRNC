@@ -30,6 +30,19 @@ const BrandingContext = createContext<BrandingContextType>({
   uploadLogo: async () => DEFAULT_BRANDING,
 });
 
+function adjustBrightness(hex: string, percent: number): string {
+  const cleanHex = hex.replace('#', '').trim();
+  if (cleanHex.length !== 6) return hex;
+  const num = parseInt(cleanHex, 16);
+  let r = (num >> 16) + Math.round(255 * (percent / 100));
+  let g = ((num >> 8) & 0x00ff) + Math.round(255 * (percent / 100));
+  let b = (num & 0x0000ff) + Math.round(255 * (percent / 100));
+  r = Math.min(255, Math.max(0, r));
+  g = Math.min(255, Math.max(0, g));
+  b = Math.min(255, Math.max(0, b));
+  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+}
+
 export const BrandingProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [branding, setBranding] = useState<BrandingSettings>(DEFAULT_BRANDING);
   const [loading, setLoading] = useState(true);
@@ -50,11 +63,49 @@ export const BrandingProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     loadBranding();
   }, []);
 
+  // Update tab title
   useEffect(() => {
     if (branding.company_name) {
       document.title = `${branding.company_name} | nexRNC`;
     }
   }, [branding.company_name]);
+
+  // Apply dynamic colors to CSS custom properties in real-time
+  useEffect(() => {
+    const root = document.documentElement;
+    if (branding.primary_color) {
+      const primary = branding.primary_color;
+      const primaryLight = adjustBrightness(primary, 15);
+      const primaryDark = adjustBrightness(primary, -18);
+      root.style.setProperty('--color-tec-navy', primary);
+      root.style.setProperty('--color-tec-navy-light', primaryLight);
+      root.style.setProperty('--color-tec-navy-dark', primaryDark);
+    }
+    if (branding.accent_color) {
+      const accent = branding.accent_color;
+      const accentHover = adjustBrightness(accent, -12);
+      root.style.setProperty('--color-tec-orange', accent);
+      root.style.setProperty('--color-tec-orange-hover', accentHover);
+      root.style.setProperty('--color-tec-orange-light', `${accent}18`);
+    }
+  }, [branding.primary_color, branding.accent_color]);
+
+  // Apply dynamic favicon
+  useEffect(() => {
+    let favicon = document.querySelector<HTMLLinkElement>("link[rel~='icon']");
+    if (!favicon) {
+      favicon = document.createElement('link');
+      favicon.rel = 'icon';
+      document.head.appendChild(favicon);
+    }
+    if (branding.logo_url) {
+      favicon.href = branding.logo_url;
+      favicon.type = 'image/png';
+    } else {
+      favicon.href = '/favicon.svg';
+      favicon.type = 'image/svg+xml';
+    }
+  }, [branding.logo_url]);
 
   const handleUpdate = async (payload: Partial<BrandingSettings>) => {
     const updated = await updateBrandingSettings(payload);

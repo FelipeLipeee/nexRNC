@@ -7,6 +7,10 @@ export default defineConfig({
     react(),
     tailwindcss()
   ],
+  build: {
+    outDir: '../backend/static',
+    emptyOutDir: true,
+  },
   server: {
     port: 3010,
     host: '0.0.0.0',
